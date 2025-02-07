@@ -1,4 +1,4 @@
-import sequelize from "../db/database";
+import sequelize from "../config/database";
 import User from "./user";
 
 const syncDatabase = async () => {

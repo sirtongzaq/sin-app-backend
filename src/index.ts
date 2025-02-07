@@ -1,5 +1,5 @@
 import { Elysia } from "elysia";
-import { userRoutes } from "./routes/userRoutes";
+import { routes } from "./routes"; // Import all routes
 import { syncDatabase } from "./models";
 import dotenv from "dotenv";
 
@@ -9,9 +9,12 @@ dotenv.config();
 syncDatabase();
 
 // Initialize Elysia App
-const app = new Elysia()
-  .get(userRoutes.get.path, userRoutes.get.handler)
-  .post(userRoutes.post.path, userRoutes.post.handler)
-  .listen(process.env.PORT || 3000);
+const app = new Elysia();
+
+// Register all routes in a loop
+routes.forEach((route) => app.use(route));
+
+// Start server
+app.listen(process.env.PORT || 3000);
 
 console.log(`✅ Server running at http://localhost:${app.server?.port}`);
