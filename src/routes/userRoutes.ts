@@ -1,23 +1,12 @@
+// src/routes/userRoutes.ts
 import { Elysia, t } from "elysia";
-import User from "../models/user";
+import { getUsers, createUser } from "../controllers/userController";
 
 export const userRoutes = new Elysia()
-  .get("/users", async () => {
-    return await User.findAll();
-  })
-  .get("/test", async () => {
-    return await User.findAll();
-  })
+  .get("/users", getUsers)
   .post(
     "/users",
-    async ({ body }) => {
-      try {
-        const user = await User.create(body);
-        return user;
-      } catch (error) {
-        return { error: "Failed to create user" };
-      }
-    },
+    createUser,
     {
       body: t.Object({
         name: t.String(),
