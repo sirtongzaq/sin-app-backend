@@ -1,4 +1,4 @@
-import sequelize from "../config/database";
+import sequelize from "../config/prisma";
 import User from "./user";
 
 const syncDatabase = async () => {

@@ -1,20 +1,43 @@
-import { Elysia } from "elysia";
-import { routes } from "./routes"; // Import all routes
-import { syncDatabase } from "./models";
-import dotenv from "dotenv";
+// import { Elysia } from "elysia";
 
-dotenv.config();
+import { PrismaClient } from "@prisma/client";
 
-// Sync database before starting server
-syncDatabase();
+const prisma = new PrismaClient();
 
-// Initialize Elysia App
-const app = new Elysia();
+// // create a new user
+// await prisma.user.create({
+//   data: {
+//     name: "John dsdss",
+//   },
+// });
 
-// Register all routes in a loop
-routes.forEach((route) => app.use(route));
+// count the number of users
+const count = await prisma.user.findMany({
+    where:{
+        id:{
+            equals:4
+        }
+    }
+}).then((res) => {
+    console.log(res)
+}).catch((error) => {
+    console.log(error)
+});
+console.log(`There are ${count} users in the database.`);
 
-// Start server
-app.listen(process.env.PORT || 3000);
 
-console.log(`✅ Server running at http://localhost:${app.server?.port}`);
+// dotenv.config();
+
+// // Sync database before starting server
+// syncDatabase();
+
+// // Initialize Elysia App
+// const app = new Elysia();
+
+// // Register all routes in a loop
+// routes.forEach((route) => app.use(route));
+
+// // Start server
+// app.listen(process.env.PORT || 3000);
+
+// console.log(`✅ Server running at http://localhost:${app.server?.port}`);
