@@ -3,15 +3,12 @@
   "version": "1.0.50",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "bun run --watch src/index.ts"
+    "dev": "bunx prisma generate && bun run --watch src/index.ts "
   },
   "dependencies": {
     "@prisma/client": "^6.3.1",
     "dotenv": "^16.4.7",
-    "elysia": "latest",
-    "mongoose": "^8.9.6",
-    "sequelize": "^6.37.5",
-    "sqlite3": "^5.1.7"
+    "elysia": "latest"
   },
   "devDependencies": {
     "bun-types": "latest",
