@@ -7,12 +7,17 @@ export class UserRepository extends BaseRepository<User> {
     super(prisma.user);
   }
 
-  async findById(id: number): Promise<User | null> { //ตรงนี้ error
-    console.log("id", id)
-    return await this.model.findUnique({ where: { id } }); 
+  async findById(id: number): Promise<any> {
+    const response = await this.model.findUnique({ where: { id } });
+    return response;
   }
 
   async createUser(data: any): Promise<User | null> {
     return await this.model.create({ data });
+  }
+
+  public async isEmailExist(email:string){
+    const response = await this.model.findUnique({ where: { email } });
+    return response
   }
 }

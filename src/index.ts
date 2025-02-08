@@ -17,6 +17,10 @@ const app = new Elysia();
 // Register all routes in a loop
 routes.forEach((route) => app.use(route));
 
+app.get('/',(req:Request,res:Response)=>(
+    "SIN BACKEND"
+))
+
 // Start server
 app.listen(process.env.PORT || 3000);
 

@@ -1,6 +1,7 @@
 // src/routes/userRoutes.ts
 import { Elysia, t } from "elysia";
-import { createUser, findUsers, getUsers } from "../controllers/userController";
+import { createUser, findUsers, getUserById, getUsers } from "../controllers/userController";
+import { signInDto, singUpDto } from "../dto/userDto";
 
 const BodySchema = t.Object({
   name: t.String(),
@@ -9,8 +10,10 @@ const BodySchema = t.Object({
 
 export const userRoutes = new Elysia()
   .post("/create", createUser, {
-    body: BodySchema,
-  })
+    body: singUpDto,
+  }
+)
+  .get("/user/:id", getUserById)
   .get("/users", getUsers)
   .post("/users", findUsers, {
     body: t.Object({

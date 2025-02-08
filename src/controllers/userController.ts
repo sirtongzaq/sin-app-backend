@@ -1,11 +1,12 @@
 // src/controllers/userController.ts
+
+import { SignInDTO, SignUpDTO } from "../dto/userDto";
 import { UserService } from "../services/userService";
-const query = new UserService();
+const userService = new UserService();
 
 export const findUsers = async ({ body }: { body: any }) => {
   try {
-    console.log("body>>>", body);
-    const user = await query.findUser(body.id);
+    const user = await userService.findUser(body.id);
     return {
       status: "s",
       message: "success",
@@ -19,7 +20,7 @@ export const findUsers = async ({ body }: { body: any }) => {
 
 export const getUsers = async () => {
   try {
-    const user = await query.getUsers();
+    const user = await userService.getUsers();
     return {
       status: "s",
       message: "success",
@@ -31,17 +32,32 @@ export const getUsers = async () => {
   }
 };
 
-export const createUser = async ({ body }: { body: any }) => {
+export const createUser = async ({
+  set,
+  request,
+  body,
+}: {
+  set: any;
+  request: any;
+  body: SignUpDTO;
+}) => {
   try {
-    console.log("body>>>", body);
-    const user = await query.createUser({ body });
+  
+    const respone = await userService.createUser({ body });
     return {
-      status: "s",
-      message: "success",
-      data: user,
+      data: respone,
+      // status: respone?.status,
     };
   } catch (error) {
     console.error("Error creating user:", error);
     return { error: "Failed to create user. Please try again." };
   }
 };
+
+export const getUserById = async ({ params }: { params: any }) => {
+  const { id } = params;
+  const response = await userService.findUserById(Number(id));
+  return response;
+};
+
+export const singIn = () => {};
