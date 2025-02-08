@@ -62,4 +62,12 @@ export class UserService {
     });
     return hashpassword;
   }
+
+  private async vertifyPassword(password:String){
+    const hashpassword = this.hashpassword(password) /// จากเมล
+    const isMatch = await Bun.password.verify(String(password), String(hashpassword));
+
+    return isMatch
+  }
+
 }
