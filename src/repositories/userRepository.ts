@@ -1,13 +1,14 @@
 import { BaseRepository } from "./baseRepository";
-import { prisma } from "../config/prisma"
+import { prisma } from "../config/prisma";
 import { User } from "@prisma/client";
 
 export class UserRepository extends BaseRepository<User> {
   constructor() {
-    super(prisma.user);
+    super(prisma.user); // Referencing the 'user' model correctly
   }
 
   async findByEmail(email: string): Promise<User | null> {
     return await this.model.findUnique({ where: { email } });
   }
+
 }
