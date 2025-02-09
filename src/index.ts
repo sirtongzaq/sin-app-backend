@@ -1,21 +1,26 @@
+import { Elysia, env } from 'elysia';
+import { swagger } from '@elysiajs/swagger';
+import { auth } from './service/user/userAuthSevice';
+import jwt from '@elysiajs/jwt';
+import cookie from '@elysiajs/cookie';
 
-import Elysia from "elysia";
-import { auth } from "~modules/auth";
-import { cookie } from "@elysiajs/cookie";
-import { jwt } from "@elysiajs/jwt";
 const app = new Elysia()
-  .group("/api", (app) =>
-    app
-      .use(
-        jwt({
-          name: "jwt",
-          secret: Bun.env.JWT_SECRET!,
+    .use(jwt({
+        name: "jwt",
+        secret: process.env.JWT_SECRET || '',
+    }))
+    .use(cookie())
+    .use(
+        swagger({
+            documentation: {
+                info: {
+                    title: 'Sin_App API Endpoint',
+                    version: '1.0.0',
+                },
+            },
         })
-      )
-      .use(cookie())
-      .use(auth)
-  )
-  .listen(8080);
-console.log(
-  `🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`
-);
+    )
+    .group('/api', (app) => app.use(auth))
+    .listen(3000);
+
+console.log(`🚀 Server is running at http://localhost:3000`);
