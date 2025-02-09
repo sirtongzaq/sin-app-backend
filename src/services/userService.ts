@@ -70,4 +70,15 @@ export class UserService {
     return isMatch
   }
 
+  public async testPg(){
+    const response = await this.UserRepository.findUserwithPagination(1,10)
+    const result = {
+      page:null,
+      totalItems:null,
+      data:response
+    }
+    return result
+  }
+  
+
 }

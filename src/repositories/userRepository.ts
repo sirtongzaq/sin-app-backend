@@ -20,4 +20,13 @@ export class UserRepository extends BaseRepository<User> {
     const response = await this.model.findUnique({ where: { email } });
     return response
   }
+
+  public async findUserwithPagination(page: number, limit: number) {
+    const offset = (page - 1) * limit;
+    const response = await this.model.findMany({
+      skip: offset,
+      take: limit,
+    });
+    return response;
+  }
 }
