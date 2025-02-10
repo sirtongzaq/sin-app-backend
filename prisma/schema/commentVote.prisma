@@ -1,0 +1,13 @@
+model CommentVote {
+  id         String   @id @default(uuid())
+  user_id    String
+  comment_id String
+  voteType   Int // 1 (Good), -1 (Bad)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user    User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  comment PostComment @relation(fields: [comment_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, comment_id])
+}

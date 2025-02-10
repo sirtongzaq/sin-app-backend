@@ -7,17 +7,32 @@ export class UserRepository extends BaseRepository<User> {
     super(prisma.user);
   }
 
-  async findById(id: number): Promise<any> {
-    const response = await this.model.findUnique({ where: { id } });
-    return response;
+  async find(body: any): Promise<any> {
+    try {
+      const response = await this.model.findUnique({ where: body });
+      return response;
+    } catch (e) {
+      console.error("Error finding user:", e);
+      return e;
+    }
   }
 
   async createUser(data: any): Promise<User | null> {
     return await this.model.create({ data });
   }
 
-  public async isEmailExist(email:string){
-    const response = await this.model.findUnique({ where: { email } });
-    return response
-  }
+  // async findByEmail(email: string): Promise<any> {
+  //   try {
+  //     const response = await this.model.findUnique({ where: { email } });
+  //     return response;
+  //   } catch (e) {
+  //     console.error("Error finding email:", e);
+  //     return e;
+  //   }
+  // }
+
+  // public async isEmailExist(email: string) {
+  //   const response = await this.model.findUnique({ where: { email } });
+  //   return response;
+  // }
 }

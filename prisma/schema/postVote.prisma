@@ -1,0 +1,13 @@
+model PostVote {
+  id        String   @id @default(uuid())
+  user_id   String
+  post_id   String
+  voteType  Int // 1 (Good), -1 (Bad)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  post Post @relation(fields: [post_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, post_id])
+}

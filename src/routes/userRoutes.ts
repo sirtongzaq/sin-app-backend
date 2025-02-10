@@ -1,22 +1,23 @@
 // src/routes/userRoutes.ts
 import { Elysia, t } from "elysia";
-import { createUser, findUsers, getUserById, getUsers } from "../controllers/userController";
-import { signInDto, singUpDto } from "../dto/userDto";
+import {
+  createUser,
+  findUser,
+  getUsers,
+} from "../controllers/userController";
+import { signInDTO, singUpDto } from "../dto/userDto";
 
-const BodySchema = t.Object({
-  name: t.String(),
-  email: t.String(),
-});
-
-export const userRoutes = new Elysia()
-  .post("/create", createUser, {
-    body: singUpDto,
-  }
-)
-  .get("/user/:id", getUserById)
+export const userRoutes = new Elysia({ prefix: "/user" })
   .get("/users", getUsers)
-  .post("/users", findUsers, {
+  .post("/sign-up", createUser ,{
+    body: signInDTO
+  })
+  .post("/sign-in", "")
+  .post("/profile", findUser, {
     body: t.Object({
-      id: t.Number(),
-    }),
-  });
+      id: t.Optional(t.String()),
+      email: t.Optional(t.String()),
+      user_name: t.Optional(t.String())
+    })
+  })
+

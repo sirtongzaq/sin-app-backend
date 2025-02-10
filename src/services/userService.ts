@@ -1,30 +1,10 @@
 // src/controllers/userController.ts
+import { error } from "elysia";
 import { UserRepository } from "../repositories/userRepository";
-import { isNullOrUndefined } from "../utils/objectUtils";
+import { isEmpty, isNullOrUndefined } from "../utils/objectUtils";
 
 export class UserService {
   private readonly UserRepository: UserRepository = new UserRepository();
-
-  findUser = async ({ body }: { body: any }) => {
-    try {
-      const user = await this.UserRepository.findById(body);
-      return user;
-    } catch (error) {
-      console.error("Error creating user:", error);
-      return { error: "Failed to create user. Please try again." };
-    }
-  };
-
-  public async findUserById(id: number) {
-    try {
-      const response = await this.UserRepository.findById(id);
-      return response;
-    } catch (error) {
-      return {
-        error: error,
-      };
-    }
-  }
 
   getUsers = async () => {
     try {
@@ -32,42 +12,122 @@ export class UserService {
       return user;
     } catch (e) {
       console.error("Error creating user:", e);
-      return { error: "Failed to create user. Please try again." };
+      return null;
+    }
+  };
+
+  findUser = async ({ body }: { body: any }) => {
+    try {
+      if (isEmpty(body)) {
+        return { status: "F", error: "Body is missing" };
+      }
+
+      const respone = await this.UserRepository.find(body);
+
+      if (isNullOrUndefined(respone)) {
+        return {
+          status: "S",
+          message: "User not found",
+          data: [],
+        };
+      }
+
+      return {
+        status: "S",
+        message: "User found",
+        data: respone,
+      };
+    } catch (e) {
+      return {
+        status: "F",
+        message: "Failed to find user. Please try again.",
+        error: e,
+      };
     }
   };
 
   createUser = async ({ body }: { body: any }) => {
     try {
-      const payload = body
-      const email = payload?.email;
-      const hashpassword =  await this.hashpassword(body?.password);
-      const emailExist = await this.UserRepository.isEmailExist(email);
-      payload.password = hashpassword
+      const { email, password, user_name, user_image } = body;
+      // check value body
+      if (!email || !password || !user_name) {
+        return {
+          status: "F",
+          error: "email or password or user_name is missing", // we choose handle each case ***
+        };
+      }
+      // hash password use bcrypt
+      const hashedPassword = await this.hashpassword(password);
+      // check email and username already exsist
+      const emailExist = await this.UserRepository.find({ email: email });
+      const usernameExist = await this.UserRepository.find({
+        user_name: user_name,
+      });
 
-      if (!isNullOrUndefined(emailExist)) {
-        return { error: "can't register", staus: 400 };
+      if (emailExist) {
+        return { status: "F", error: "Email already registered" };
       }
 
-      const user = await this.UserRepository.createUser(payload);
-      return user;
+      if (usernameExist) {
+        return { status: "F", error: "Username already registered" };
+      }
+
+      // create new user
+      const newUser = await this.UserRepository.create({
+        user_name,
+        user_image: user_image ? user_image : "",
+        email,
+        password: hashedPassword,
+      });
+
+      return {
+        status: "S",
+        message: "User create successfully",
+        data: newUser,
+      };
     } catch (e) {
       console.error("Error creating user:", e);
-      return { error: "Failed to create user. Please try again." };
+      return {
+        status: "F",
+        message: "Failed to create user. Please try again.",
+        error: e,
+      };
     }
   };
 
-  private async hashpassword(password: String) {
-    const hashpassword = await Bun.password.hash(String(password), {
+  // public async findUserById(id: number) {
+  //   try {
+  //     // check value body
+  //     if (!id) {
+  //       return { status: "F", error: "id is missing" };
+  //     }
+  //     const user = await this.UserRepository.findById(id);
+  //     return user;
+  //   } catch (e) {
+  //     console.error("Error find user:", e);
+  //     return {
+  //       status: "F",
+  //       message: "Failed to find user. Please try again.",
+  //       error: e,
+  //     };
+  //   }
+  // }
+
+  private async hashpassword(password: string) {
+    const hashedPassword = await Bun.password.hash(password, {
       algorithm: "bcrypt",
+      cost: 4,
     });
-    return hashpassword;
+    return hashedPassword;
   }
 
-  private async vertifyPassword(password:String){
-    const hashpassword = this.hashpassword(password) /// จากเมล
-    const isMatch = await Bun.password.verify(String(password), String(hashpassword));
+  private async vertifyPassword(password: string, passwordDB: string) {
+    const hashpassword = this.hashpassword(password);
+    const isMatch = await Bun.password.verify(
+      String(hashpassword),
+      String(passwordDB)
+    );
 
-    return isMatch
+    return isMatch;
   }
-
 }

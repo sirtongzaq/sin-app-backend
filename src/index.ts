@@ -5,21 +5,24 @@ import { prisma } from "./config/prisma";
 
 dotenv.config();
 
-// Prisma connection
-(async ()=> {
-    await prisma.$connect();
-    console.log("✅ DB connected!")
-})
-
 // Initialize Elysia App
 const app = new Elysia();
 
-// Register all routes in a loop
+// Immediately Connect Prisma Before Starting Server
+(async () => {
+  try {
+    await prisma.$connect();
+    console.log("✅ DB connected!");
+  } catch (error) {
+    console.error("❌ Failed to connect to the database:", error);
+    process.exit(1); // Exit if DB connection fails
+  }
+})();
+
+// Register all routes
 routes.forEach((route) => app.use(route));
 
-app.get('/',(req:Request,res:Response)=>(
-    "SIN BACKEND"
-))
+app.get("/", () => "SIN BACKEND");
 
 // Start server
 app.listen(process.env.PORT || 3000);
