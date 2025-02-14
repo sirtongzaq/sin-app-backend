@@ -1,14 +1,17 @@
 // src/routes/userRoutes.ts
 import { Elysia, t } from "elysia";
 import { findUser, getUsers } from "../controllers/userController";
-import { signInDTO } from "../dto/userDto";
+import { protectMiddleware } from "../middleware/authProtect";
+import { authPlugin } from "../services/authPlugin";
 
 export const userRoutes = new Elysia({ prefix: "/user" })
-  .get("/users", getUsers)
+  .use(authPlugin)
+  .get("/users", getUsers, { beforeHandle: protectMiddleware })
   .post("/profile", findUser, {
     body: t.Object({
       id: t.Optional(t.String()),
       email: t.Optional(t.String()),
       user_name: t.Optional(t.String()),
     }),
+    beforeHandle: protectMiddleware,
   });

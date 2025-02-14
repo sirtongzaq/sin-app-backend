@@ -1,10 +1,10 @@
 import { BaseRepository } from "./baseRepository";
 import { prisma } from "../config/prisma";
-import { User } from "@prisma/client";
+import { Post } from "@prisma/client";
 
-export class UserRepository extends BaseRepository<User> {
+export class PostRepository extends BaseRepository<Post> {
   constructor() {
-    super(prisma.user);
+    super(prisma.post);
   }
 
   async find(body: any): Promise<any> {
@@ -17,7 +17,7 @@ export class UserRepository extends BaseRepository<User> {
     }
   }
 
-  async createUser(data: any): Promise<User | null> {
+  async createPost(data: any): Promise<Post | null> {
     return await this.model.create({ data });
   }
 }
