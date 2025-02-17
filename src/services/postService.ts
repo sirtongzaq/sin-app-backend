@@ -5,7 +5,7 @@ export class PostService {
   private readonly PostRepository: PostRepository = new PostRepository();
   getPosts = async () => {
     try {
-      const post = await this.PostRepository.findAll();
+      const post = await this.PostRepository.findAllPostWithCommentsAndVotes();
       if (!post || post.length === 0) {
         return { status: "S", message: "Post not found" };
       }
@@ -17,22 +17,35 @@ export class PostService {
     }
   };
 
-  createPost = async ({ body, store }: { body: any, store: IStore }) => {
+  getPostById = async ({ id }: { id: string }) => {
+    try {
+      const post = await this.PostRepository.findPostWithCommentsAndVotes(id);
+      if (!post) {
+        return { status: "S", message: "Post not found" };
+      }
+
+      return { status: "S", message: "Success", data: post };
+    } catch (e) {
+      console.error("Error finding post:", e);
+      return { status: "F", message: "Error finding post", error: e };
+    }
+  };
+
+  createPost = async ({ body, store }: { body: any; store: IStore }) => {
     try {
       if (isEmpty(body)) {
         return { status: "F", message: "Body is missing" };
       }
 
       const save = {
-        user_id : store.user?.id,
+        user_id: store.user?.id,
         title: body.title,
         content: body.content,
         post_image: body.post_image || [],
-        isAnonymous: body.isAnonymous || false
-      }
+        isAnonymous: body.isAnonymous || false,
+      };
 
-      console.log(">>>>>>>>",save)
-      const postSave = await this.PostRepository.createPost(save);
+      const postSave = await this.PostRepository.create(save);
       return {
         status: "S",
         message: "Post create successfully",

@@ -1,7 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
-
 export class BaseRepository<T> {
   model: any;
 
@@ -9,11 +8,16 @@ export class BaseRepository<T> {
     this.model = model;
   }
 
+  async find(data: Partial<T>): Promise<T> {
+    const response = await this.model.findUnique({ where: data });
+    return response;
+  }
+
   async findAll(): Promise<T[]> {
     return await this.model.findMany();
   }
 
-  async findById(id: number): Promise<T | null> {
+  async findById(id: string): Promise<T | null> {
     return await this.model.findUnique({ where: { id } });
   }
 

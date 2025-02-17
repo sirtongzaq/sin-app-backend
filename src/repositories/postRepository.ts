@@ -7,17 +7,44 @@ export class PostRepository extends BaseRepository<Post> {
     super(prisma.post);
   }
 
-  async find(body: any): Promise<any> {
-    try {
-      const response = await this.model.findUnique({ where: body });
-      return response;
-    } catch (e) {
-      console.error("Error finding user:", e);
-      return e;
-    }
+  async findAllPostWithCommentsAndVotes(): Promise<any> {
+    const response = await this.model.findMany({
+      include: {
+        comments: {
+          include: {
+            user: true,
+            votes: true,
+          },
+        },
+        votes: {
+          include: {
+            user: true,
+          },
+        },
+        user: true,
+      },
+    });
+    return response;
   }
 
-  async createPost(data: any): Promise<Post | null> {
-    return await this.model.create({ data });
+  async findPostWithCommentsAndVotes(postId: string): Promise<any> {
+    const response = await this.model.findUnique({
+      where: { id: postId },
+      include: {
+        comments: {
+          include: {
+            user: true,
+            votes: true,
+          },
+        },
+        votes: {
+          include: {
+            user: true,
+          },
+        },
+        user: true,
+      },
+    });
+    return response;
   }
 }

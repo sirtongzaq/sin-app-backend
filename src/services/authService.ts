@@ -69,7 +69,6 @@ export class AuthService {
       if (!userData) {
         return { status: "F", error: "Username does not exist" };
       }
-      console.log("userData", userData)
       // vertify password use bcrypt
       const vertifyPassword = await this.vertifyPassword(
         password,
