@@ -1,6 +1,7 @@
 import { authRoutes } from "./authRoutes";
+import { postCommentRoutes } from "./postCommentRoutes";
 import { postRoutes } from "./postRoutes";
 import { userRoutes } from "./userRoutes";
 
 
-export const routes = [userRoutes, postRoutes, authRoutes];
+export const routes = [userRoutes, postRoutes, authRoutes, postCommentRoutes];

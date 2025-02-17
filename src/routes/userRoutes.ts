@@ -3,8 +3,12 @@ import { Elysia, t } from "elysia";
 import { findUser, getUsers } from "../controllers/userController";
 import { protectMiddleware } from "../middleware/authProtect";
 import { authPlugin } from "../services/authPlugin";
+import { customValidationErrorHandler } from "../services/globalPugin";
 
 export const userRoutes = new Elysia({ prefix: "/user" })
+  .onError(({ code, error, set }) => {
+    return customValidationErrorHandler(code, error, set);
+  })
   .use(authPlugin)
   .get("/users", getUsers, { beforeHandle: protectMiddleware })
   .post("/profile", findUser, {
